@@ -1,0 +1,56 @@
+name: Deployment
+
+on: create
+
+jobs:
+  deploy-component:
+    name: Deploy Hasura
+    runs-on: ubuntu-20.04
+    env:
+      KUBE_TOKEN: ${{ secrets.ABLE_KUBE_TOKEN }}
+      KUBE_CONFIG_DATA: ${{ secrets.ABLE_KUBE_CONFIG_DATA}}
+      KUBECONFIG: /tmp/kube-config
+      ECR_REPOSITORY: platform
+      IMAGE_TAG: ${{ github.sha }}
+      AWS_REGION: us-east-1
+      AWS_CERTIFICATE_ARN: ${{ secrets.ABLE_AWS_CERTIFICATE_ARN }}
+      HASURA_VERSION: v2.0.0-alpha.10
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ABLE }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ABLE }}
+          aws-region: ${{ env.AWS_REGION_ABLE }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build \
+            --build-arg "DATABASE_URL=$DATABASE_URL" \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Set cluster configuration
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 -d > /tmp/kube-config
+          chmod 600 /tmp/kube-config
+      - name: Run helm
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          helm upgrade --wait --install $COMPONENT_APP_NAME component \
+            --namespace platform \
+            --set env.database_url=$DATABASE_URL \
+            --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
+            --set image.tag=$IMAGE_TAG \
+            --set ingress.alb.certificateArn=$AWS_CERTIFICATE_ARN \
+            --kube-token $KUBE_TOKEN
+        working-directory: helm
+
