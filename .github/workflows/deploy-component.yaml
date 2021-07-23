@@ -14,7 +14,6 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
       AWS_REGION: us-east-1
       AWS_CERTIFICATE_ARN: ${{ secrets.ABLE_AWS_CERTIFICATE_ARN }}
-      HASURA_VERSION: v2.0.0-alpha.10
 
     steps:
       - uses: actions/checkout@v2
