@@ -4,7 +4,7 @@ on: create
 
 jobs:
   deploy-component:
-    name: Deploy Hasura
+    name: Deploy Component
     runs-on: ubuntu-20.04
     env:
       KUBE_TOKEN: ${{ secrets.ABLE_KUBE_TOKEN }}

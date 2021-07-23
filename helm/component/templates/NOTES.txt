@@ -1,0 +1,9 @@
+1. Get the application URL by running these commands:
+{{- if .Values.ingress.enabled }}
+  export HOSTNAME=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" ingress {{ include "hasura.fullname" . }})
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  echo "http://$HOSTNAME{{ .path }}"
+  {{- end }}
+{{- end }}
+{{- end }}
