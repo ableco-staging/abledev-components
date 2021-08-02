@@ -1,6 +1,8 @@
 name: Deployment
 
-on: create
+on:
+  create:
+  workflow_dispatch:
 
 jobs:
   deploy-component:
