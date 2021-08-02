@@ -37,3 +37,18 @@ jobs:
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Set cluster configuration
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 -d > /tmp/kube-config
+          chmod 600 /tmp/kube-config
+      - name: Run helm
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          helm upgrade --wait --install $PLATFORM_APP_NAME component \
+            --namespace platform \
+            --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
+            --set image.tag=$IMAGE_TAG \
+            --set ingress.alb.certificateArn=$AWS_CERTIFICATE_ARN \
+            --kube-token $KUBE_TOKEN
+        working-directory: helm
