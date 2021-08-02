@@ -19,9 +19,10 @@ jobs:
       PLATFORM_APP_NAME: doable-app-repo-name
     steps:
       - uses: actions/checkout@v2
-      - name:
+      - name: Create new database
         run: |
           PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U ${{ secrets.RDS_MASTER_USER }} -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com -c "create database doable_app_repo_name"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U ${{ secrets.RDS_MASTER_USER }} -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com -c "create user doable_app_repo_namewith encrypted password 'doable_app_repo_name'"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
