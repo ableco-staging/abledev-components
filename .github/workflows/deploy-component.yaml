@@ -49,11 +49,13 @@ jobs:
       - name: Run helm
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          DATABASE_URL: doable_app_repo_name:doable_app_repo_name@terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com:doable_app_repo_name
         run: |
           helm upgrade --wait --install $PLATFORM_APP_NAME component \
             --namespace platform \
             --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
             --set image.tag=$IMAGE_TAG \
             --set ingress.alb.certificateArn=$AWS_CERTIFICATE_ARN \
+            --set env.database_url=$DATABASE_URL \
             --kube-token $KUBE_TOKEN
         working-directory: helm
