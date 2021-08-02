@@ -16,7 +16,7 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
       AWS_REGION: us-east-1
       AWS_CERTIFICATE_ARN: ${{ secrets.ABLE_AWS_CERTIFICATE_ARN }}
-      PLATFORM_APP_NAME: doable-app-repo-name
+      PLATFORM_APP_NAME: doable-app-repo
     steps:
       - uses: actions/checkout@v2
       - name: Create new database
