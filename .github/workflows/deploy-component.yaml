@@ -77,4 +77,4 @@ jobs:
       - name: Get pod
         run: echo PLATFORM_APP_POD=$(kubectl --token=$KUBE_TOKEN get pods -l app.kubernetes.io/instance=$PLATFORM_APP_NAME --namespace platform  -o jsonpath='{.items[0].metadata.name}') >> $GITHUB_ENV
       - name: Run migrations 
-        run: kubectl --token=$KUBE_TOKEN exec -i $PLATFORM_APP_POD --namespace platform -- bash -c '/app/node_modules/.bin/blitz prisma migrate deploy'
+        run: kubectl --token=$KUBE_TOKEN exec -i $PLATFORM_APP_POD --namespace platform -- ./node_modules/.bin/blitz prisma migrate deploy
