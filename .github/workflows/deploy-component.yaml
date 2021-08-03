@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Create new database
         run: |
-          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "drop database if exits $PLATFORM_APP_NAME"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "drop database if exists $PLATFORM_APP_NAME"
           PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create database $PLATFORM_APP_NAME"
           PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create user $PLATFORM_APP_NAME with encrypted password $PLATFORM_DB_PASSWORD"
         continue-on-error: true
