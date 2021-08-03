@@ -9,14 +9,14 @@ jobs:
     name: Deploy Component
     runs-on: ubuntu-20.04
     env:
-      KUBE_TOKEN: ${{ secrets.GLOBAL_KUBE_TOKEN }}
-      KUBE_CONFIG_DATA: ${{ secrets.GLOBAL_KUBE_CONFIG_DATA}}
+      KUBE_TOKEN: ${{ secrets.ABLE_KUBE_TOKEN }}
+      KUBE_CONFIG_DATA: ${{ secrets.ABLE_KUBE_CONFIG_DATA}}
       KUBECONFIG: /tmp/kube-config
       ECR_REPOSITORY: platform
       IMAGE_TAG: ${{ github.sha }}
       AWS_REGION: us-east-1
       AWS_CERTIFICATE_ARN: ${{ secrets.ABLE_AWS_CERTIFICATE_ARN }}
-      PLATFORM_APP_NAME: doable-app
+      PLATFORM_APP_NAME: components-pr-21
     steps:
       - uses: actions/checkout@v2
       - name: Create new database
@@ -27,8 +27,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.GLOBAL_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.GLOBAL_AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ABLE }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ABLE }}
           aws-region: ${{ env.AWS_REGION }}
       - name: Login to Amazon ECR
         id: login-ecr
@@ -50,6 +50,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           AWS_CERTIFICATE_ARN: ${{ secrets.AWS_CERTIFICATE_ARN }}
+          SESSION_SECRET_KEY: ${{ secrets.PLATFORM_SESSION_SECRET_KEY }}
           DATABASE_URL: doable_app_repo_name:doable_app_repo_name@terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com:doable_app_repo_name
         run: |
           helm upgrade --wait --install $PLATFORM_APP_NAME component \
@@ -58,5 +59,6 @@ jobs:
             --set image.tag=$IMAGE_TAG \
             --set ingress.alb.certificateArn=$AWS_CERTIFICATE_ARN \
             --set env.database_url=$DATABASE_URL \
+            --set env.secret_session_key=$SESSION_SECRET_KEY \
             --kube-token $KUBE_TOKEN
         working-directory: helm
