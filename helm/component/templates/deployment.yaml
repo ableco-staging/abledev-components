@@ -42,6 +42,8 @@ spec:
             value: {{ .Values.env.google_client_id }}
           - name: GOOGLE_CLIENT_SECRET
             value: {{ .Values.env.google_client_secret }}
+          - name: GOOGLE_CALLBACK_URL
+            value: {{ .Values.env.google_callback_url }}
           ports:
             - name: http
               containerPort: 3000
