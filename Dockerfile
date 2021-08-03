@@ -14,10 +14,10 @@ FROM mhart/alpine-node:slim-14
 WORKDIR /app
 
 COPY . .
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/.blitz ./.blitz
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 EXPOSE 3000
 #
