@@ -1,7 +1,6 @@
 name: Deployment
 
 on:
-  create:
   push:
     branches:
       - main
