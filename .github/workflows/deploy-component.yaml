@@ -20,16 +20,17 @@ jobs:
       AWS_CERTIFICATE_ARN: ${{ secrets.ABLE_AWS_CERTIFICATE_ARN }}
       PLATFORM_APP_NAME: ${{ github.event.repository.name }}
       PLATFORM_DB_PASSWORD: ${{ secrets.PLATFORM_DB_PASSWORD }}
+      RDS_MASTER_HOST: terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com
     steps:
       - uses: actions/checkout@v2
       - name: Get Database name
         run: echo PLATFORM_DB_NAME=$(echo $PLATFORM_APP_NAME | tr '-' '_') >> $GITHUB_ENV
       - name: Create new database
         run: |
-          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "drop database if exists $PLATFORM_DB_NAME"
-          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create database $PLATFORM_DB_NAME"
-          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "drop role if exists $PLATFORM_DB_NAME"
-          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create user $PLATFORM_DB_NAME with encrypted password '$PLATFORM_DB_PASSWORD'"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h $RDS_MASTER_HOST platform -c "drop database if exists $PLATFORM_DB_NAME"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h $RDS_MASTER_HOST platform -c "create database $PLATFORM_DB_NAME"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h $RDS_MASTER_HOST platform -c "drop role if exists $PLATFORM_DB_NAME"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h $RDS_MASTER_HOST platform -c "create user $PLATFORM_DB_NAME with encrypted password '$PLATFORM_DB_PASSWORD'"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -60,7 +61,9 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.PLATFORM_GOOGLE_CLIENT_SECRET }}
           SESSION_SECRET_KEY: ${{ secrets.PLATFORM_SESSION_SECRET_KEY }}
           GOOGLE_CALLBACK_URL: https://oauth-proxy.able.co
-          DATABASE_URL: doable_app_repo_name:doable_app_repo_name@terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com:doable_app_repo_name
+          DATABASE_URL: postgresql://$PLATFORM_DB_NAME:$PLATFORM_DB_PASSWORD@$RDS_MASTER_HOST:5432/$PLATFORM_DB_NAME
+
+            doable_app_repo_name:doable_app_repo_name@terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com:doable_app_repo_name
         run: |
           helm upgrade --wait --install $PLATFORM_APP_NAME component \
             --namespace platform \
