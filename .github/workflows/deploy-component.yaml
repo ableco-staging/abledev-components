@@ -26,6 +26,7 @@ jobs:
         run: |
           PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "drop database if exists $PLATFORM_DB_NAME"
           PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create database $PLATFORM_DB_NAME"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "drop role if exists $PLATFORM_DB_NAME"
           PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create user $PLATFORM_DB_NAME with encrypted password '$PLATFORM_DB_PASSWORD'"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
