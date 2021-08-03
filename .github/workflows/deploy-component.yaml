@@ -17,12 +17,14 @@ jobs:
       AWS_REGION: us-east-1
       AWS_CERTIFICATE_ARN: ${{ secrets.ABLE_AWS_CERTIFICATE_ARN }}
       PLATFORM_APP_NAME: ${{ github.event.repository.name }}
+      PLATFORM_DB_PASSWORD: ${{ secrets.PLATFORM_DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
       - name: Create new database
         run: |
-          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create database doable_app_repo_name"
-          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create user doable_app_repo_namewith encrypted password 'doable_app_repo_name'"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "drop database if exits $PLATFORM_APP_NAME"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create database $PLATFORM_APP_NAME"
+          PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "create user $PLATFORM_APP_NAME with encrypted password $PLATFORM_DB_PASSWORD"
         continue-on-error: true
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
