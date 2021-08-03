@@ -20,6 +20,8 @@ jobs:
       PLATFORM_DB_PASSWORD: ${{ secrets.PLATFORM_DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
+      - name: Get Database name
+        run: echo PLATFORM_DB_NAME=$(echo $PLATFORM_APP_NAME | tr '-' '_') >> $GITHUB_ENV
       - name: Create new database
         run: |
           PGPASSWORD=${{ secrets.RDS_MASTER_PASSWORD }} psql -U root -h terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com platform -c "drop database if exists $PLATFORM_APP_NAME"
