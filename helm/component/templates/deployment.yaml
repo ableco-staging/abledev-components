@@ -38,6 +38,10 @@ spec:
             value: {{ .Values.env.database_url }}
           - name: SESSION_SECRET_KEY
             value: {{ .Values.env.session_secret_key }}
+          - name: GOOGLE_CLIENT_ID
+            value: {{ .Values.env.google_client_id }}
+          - name: GOOGLE_CLIENT_SECRET
+            value: {{ .Values.env.google_client_secret }}
           ports:
             - name: http
               containerPort: 3000

@@ -16,6 +16,8 @@ fullnameOverride: ""
 env:
   database_url: ""
   session_secret_key: ""
+  google_client_id: ""
+  google_client_secret: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

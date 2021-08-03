@@ -50,6 +50,8 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           AWS_CERTIFICATE_ARN: ${{ secrets.AWS_CERTIFICATE_ARN }}
+          GOOGLE_CLIENT_ID: ${{ secrets.PLATFORM_GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: : ${{ secrets.PLATFORM_GOOGLE_CLIENT_SECRET }}
           SESSION_SECRET_KEY: ${{ secrets.PLATFORM_SESSION_SECRET_KEY }}
           DATABASE_URL: doable_app_repo_name:doable_app_repo_name@terraform-20210802015341504500000002.cvvdjoavecoc.us-east-1.rds.amazonaws.com:doable_app_repo_name
         run: |
@@ -60,5 +62,7 @@ jobs:
             --set ingress.alb.certificateArn=$AWS_CERTIFICATE_ARN \
             --set env.database_url=$DATABASE_URL \
             --set env.secret_session_key=$SESSION_SECRET_KEY \
+            --set env.google_client_id=$GOOGLE_CLIENT_ID \
+            --set env.google_client_secret=$GOOGLE_CLIENT_SECRET \
             --kube-token $KUBE_TOKEN
         working-directory: helm
