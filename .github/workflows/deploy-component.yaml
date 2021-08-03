@@ -75,3 +75,7 @@ jobs:
             --set env.google_callback_url=$GOOGLE_CALLBACK_URL \
             --kube-token $KUBE_TOKEN
         working-directory: helm
+      - name: Get pod
+        run: echo PLATFORM_APP_POD=$(kubectl --token=$KUBE_TOKEN get pods -l app.kubernetes.io/instance=$PLATFORM_APP_NAME --namespace platform  -o jsonpath='{.items[0].metadata.name}') >> $GITHUB_ENV
+      - name: Run migrations 
+        run: kubectl --token=$KUBE_TOKEN exec -i $PLATFORM_APP_POD --namespace gobo -- bash -c 'blitz prisma migrate deploy'
