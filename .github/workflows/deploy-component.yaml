@@ -16,7 +16,7 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
       AWS_REGION: us-east-1
       AWS_CERTIFICATE_ARN: ${{ secrets.ABLE_AWS_CERTIFICATE_ARN }}
-      PLATFORM_APP_NAME: components-pr-21
+      PLATFORM_APP_NAME: ${{ github.repository.name }}
     steps:
       - uses: actions/checkout@v2
       - name: Create new database
