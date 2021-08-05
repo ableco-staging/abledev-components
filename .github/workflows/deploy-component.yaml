@@ -63,7 +63,7 @@ jobs:
           GOOGLE_CALLBACK_URL: https://oauth-proxy.able.co
           DATABASE_URL: postgresql://$PLATFORM_DB_NAME:$PLATFORM_DB_PASSWORD@$RDS_MASTER_HOST:5432/$PLATFORM_DB_NAME
         run: |
-          helm upgrade --wait --install $PLATFORM_APP_NAME component \
+          helm upgrade --wait --install $PLATFORM_APP_NAME job-request \
             --namespace platform \
             --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
             --set image.tag=$IMAGE_TAG \
